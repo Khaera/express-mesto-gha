@@ -7,6 +7,8 @@ const cardRouter = require('./routes/cards');
 
 const { PORT = 3000 } = process.env;
 
+const { NOT_FOUND } = require('./utils/errors');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -27,6 +29,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use('/', userRouter);
 app.use('/', cardRouter);
+app.use('*', (req, res, next) => {
+  res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
+
+  next();
+});
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен. Порт: ${PORT}`);
