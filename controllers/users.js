@@ -12,12 +12,17 @@ const getUser = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
+    .then((user) => {
+      if (!user) {
         return res
           .status(NOT_FOUND)
           .send({ message: 'Пользователь по указанному id не найден.' });
+      }
+      return res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Передан некорректный id.' });
       }
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
