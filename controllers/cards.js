@@ -5,7 +5,7 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors');
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
 };
 
 const createCard = (req, res) => {
@@ -19,7 +19,7 @@ const createCard = (req, res) => {
           .status(BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные при создании карточки.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -32,7 +32,7 @@ const deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не найдена.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -40,12 +40,17 @@ const likeCard = (req, res) => {
   const { cardId } = req.params;
 
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не найдена.' });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(NOT_FOUND).send({ message: 'Передан несуществующий id карточки. ' });
+        return res.status(BAD_REQUEST).send({ message: 'Передан некорректный id карточки.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
@@ -53,12 +58,17 @@ const dislikeCard = (req, res) => {
   const { cardId } = req.params;
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не найдена.' });
+      }
+      return res.send(card);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(NOT_FOUND).send({ message: 'Передан несуществующий id карточки. ' });
+        return res.status(BAD_REQUEST).send({ message: 'Передан некорректный id карточки.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка' });
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
