@@ -29,10 +29,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use('/', userRouter);
 app.use('/', cardRouter);
-app.use('*', (req, res, next) => {
+app.use('*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
-
-  next();
 });
 
 app.listen(PORT, () => {
