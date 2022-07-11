@@ -72,17 +72,19 @@ const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Пользователь с указанным id не найден.' });
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res
           .status(BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные при обновлении аватара.' });
-      }
-      if (!userId) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: 'Пользователь с указанным id не найден.' });
       }
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
