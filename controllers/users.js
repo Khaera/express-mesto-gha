@@ -9,6 +9,26 @@ const getUsers = (req, res) => {
     .catch(() => res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' }));
 };
 
+const getCurrentUser = (req, res) => {
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Пользователь по указанному id не найден.' });
+      }
+      return res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Передан некорректный id.' });
+      }
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
+    });
+};
+
 const getUser = (req, res) => {
   const { userId } = req.params;
 
@@ -99,6 +119,7 @@ const updateAvatar = (req, res) => {
 module.exports = {
   getUsers,
   getUser,
+  getCurrentUser,
   createUser,
   updateUser,
   updateAvatar,
