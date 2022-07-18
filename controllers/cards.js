@@ -17,7 +17,7 @@ const createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         return res
           .status(BAD_REQUEST)
-          .send(console.log(owner));
+          .send({ message: 'Переданы некорректные данные при создании карточки.' });
       }
       return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
@@ -25,27 +25,29 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-
-  Card.findByIdAndRemove(cardId)
+  Card
+    .findById(cardId)
     .then((card) => {
-      if (card.owner !== req.user._id) {
-        return Promise.reject(new Error('Нельзя удалить чужую карточку'));
-      }
       if (!card) {
         return res.status(NOT_FOUND).send({ message: 'Карточка с указанным id не найдена.' });
       }
-      return res.send({ message: 'Пост удалён.' });
+      if (JSON.stringify(card.owner) !== JSON.stringify(req.user._id)) {
+        return res.status(401).send({ message: 'Нельзя удалить чужую карточку' });
+      }
+      return Card.findByIdAndRemove(cardId);
     })
+    .then(() => res.send({ message: 'Пост удалён.' }))
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: 'Передан некорректный id карточки.' });
       }
-      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
 const likeCard = (req, res) => {
-  const { cardId, userId } = req.params;
+  const { cardId } = req.params;
+  const userId = req.user._id;
 
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: userId } }, { new: true })
     .then((card) => {
@@ -63,7 +65,8 @@ const likeCard = (req, res) => {
 };
 
 const dislikeCard = (req, res) => {
-  const { cardId, userId } = req.params;
+  const { cardId } = req.params;
+  const userId = req.user._id;
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
