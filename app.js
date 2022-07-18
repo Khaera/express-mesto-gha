@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 
+const auth = require('./middlewares/auth');
+
 const login = require('./controllers/login');
 const { createUser } = require('./controllers/users');
 
@@ -16,24 +18,18 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62cb02b688222f3bc8a5f961',
-  };
-
-  next();
-});
-
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
 });
 
+app.post('/signup', createUser);
+app.post('/signin', login);
+
+app.use(auth);
 app.use('/', userRouter);
 app.use('/', cardRouter);
-app.post('/signin', login);
-app.post('/signup', createUser);
 app.use('*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
 });

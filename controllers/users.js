@@ -17,7 +17,7 @@ const getCurrentUser = (req, res) => {
       if (!user) {
         return res
           .status(NOT_FOUND)
-          .send({ message: 'Пользователь по указанному id не найден.' });
+          .send(console.log(req.cookie));
       }
       return res.send(user);
     })

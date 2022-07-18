@@ -4,7 +4,7 @@ const User = require('../models/user');
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  return User.findByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
