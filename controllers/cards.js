@@ -34,14 +34,14 @@ const deleteCard = (req, res) => {
       if (JSON.stringify(card.owner) !== JSON.stringify(req.user._id)) {
         return res.status(401).send({ message: 'Нельзя удалить чужую карточку' });
       }
-      return Card.findByIdAndRemove(cardId);
+      return Card.findByIdAndRemove(cardId)
+        .then(() => res.send({ message: 'Пост удалён.' }));
     })
-    .then(() => res.send({ message: 'Пост удалён.' }))
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({ message: 'Передан некорректный id карточки.' });
       }
+      return res.status(SERVER_ERROR).send({ message: 'На сервере произошла ошибка.' });
     });
 };
 
