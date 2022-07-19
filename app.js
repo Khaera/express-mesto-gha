@@ -7,12 +7,12 @@ const cardRouter = require('./routes/cards');
 
 const auth = require('./middlewares/auth');
 
-const login = require('./controllers/login');
-const { createUser } = require('./controllers/users');
+const { createUser, login } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 
 const { NOT_FOUND } = require('./utils/errors');
+const handleErrors = require('./middlewares/handleErrors');
 
 const app = express();
 
@@ -33,6 +33,7 @@ app.use('/', cardRouter);
 app.use('*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
 });
+app.use(handleErrors);
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен. Порт: ${PORT}`);
