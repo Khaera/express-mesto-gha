@@ -150,7 +150,6 @@ const login = (req, res, next) => {
         })
         .send({ token });
     })
-    .catch(next(new BadRequestError('Неверный логин или пароль.')))
     .catch(next);
 };
 
