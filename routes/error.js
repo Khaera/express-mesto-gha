@@ -1,9 +1,8 @@
 const errorRouter = require('express').Router();
+const NotFoundError = require('../utils/errors/not-found-err');
 
-const NOT_FOUND = 404;
-
-errorRouter.all('*', (req, res) => {
-  res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
+errorRouter.all('*', (req, res, next) => {
+  next(new NotFoundError('Страница не существует.'));
 });
 
 module.exports = errorRouter;

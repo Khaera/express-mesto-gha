@@ -9,26 +9,26 @@ const {
   dislikeCard,
 } = require('../controllers/cards');
 
-cardRouter.get('/cards', getCards);
-cardRouter.post('/cards', celebrate({
+cardRouter.get('/', getCards);
+cardRouter.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().pattern(/^https?:\/\/(www.)?\S/i),
   }),
 }), createCard);
-cardRouter.delete('/cards/:cardId', celebrate({
+cardRouter.delete('/:cardId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().pattern(/^[a-f\d]{24}$/i),
+    cardId: Joi.string().hex(),
   }),
 }), deleteCard);
-cardRouter.put('/cards/:cardId/likes', celebrate({
+cardRouter.put('/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().pattern(/^[a-f\d]{24}$/i),
+    cardId: Joi.string().hex(),
   }),
 }), likeCard);
-cardRouter.delete('/cards/:cardId/likes', celebrate({
+cardRouter.delete('/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().pattern(/^[a-f\d]{24}$/i),
+    cardId: Joi.string().hex(),
   }),
 }), dislikeCard);
 
