@@ -5,13 +5,13 @@ const { celebrate, Joi, errors } = require('celebrate');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const errorRouter = require('./routes/error');
 
 const auth = require('./middlewares/auth');
 
 const { createUser, login } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
-const NOT_FOUND = 404;
 
 const handleErrors = require('./middlewares/handleErrors');
 
@@ -44,9 +44,7 @@ app.post('/signin', celebrate({
 app.use(auth);
 app.use('/', userRouter);
 app.use('/', cardRouter);
-app.use('*', (req, res) => {
-  res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
-});
+app.use('*', errorRouter);
 app.use(errors());
 app.use(handleErrors);
 
