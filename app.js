@@ -43,7 +43,12 @@ app.post('/signin', celebrate({
 
 app.use(auth);
 app.use('/', userRouter);
-app.use('/', cardRouter);
+app.use('/', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(/^https?:\/\/(www.)?\S/i),
+  }),
+}), cardRouter);
 app.use('*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Страница не существует.' });
 });
