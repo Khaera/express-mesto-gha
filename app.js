@@ -42,8 +42,8 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', userRouter);
-app.use('/', cardRouter);
+app.use('/users', userRouter);
+app.use('/cards', cardRouter);
 app.use('*', errorRouter);
 app.use(errors());
 app.use(handleErrors);

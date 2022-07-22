@@ -28,8 +28,7 @@ const getCurrentUser = (req, res, next) => {
         return next(new BadRequestError('Передан некорректный id.'));
       }
       return next(err);
-    })
-    .catch(next);
+    });
 };
 
 const getUser = (req, res, next) => {
@@ -47,8 +46,7 @@ const getUser = (req, res, next) => {
         return next(new BadRequestError('Передан некорректный id.'));
       }
       return next(err);
-    })
-    .catch(next);
+    });
 };
 
 const createUser = (req, res, next) => {
@@ -74,8 +72,7 @@ const createUser = (req, res, next) => {
           return next(new ConflictError('Пользователь с таким email уже зарегистрирован.'));
         }
         return next(err);
-      })
-      .catch(next));
+      }));
 };
 
 const updateUser = (req, res, next) => {
@@ -99,10 +96,8 @@ const updateUser = (req, res, next) => {
             return next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
           }
           return next(err);
-        })
-        .catch(next);
-    })
-    .catch(next);
+        });
+    });
 };
 
 const updateAvatar = (req, res, next) => {
@@ -127,10 +122,8 @@ const updateAvatar = (req, res, next) => {
             return next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
           }
           return next(err);
-        })
-        .catch(next);
-    })
-    .catch(next);
+        });
+    });
 };
 
 const login = (req, res, next) => {
